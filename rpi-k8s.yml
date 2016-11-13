@@ -21,4 +21,12 @@
     - { role: rpi-k8s, role_action: 'join minions' }
   tags:
     - k8s-minions
+
+- name: setup flannel overlay network
+  hosts: k8s_master
+  become: true
+  roles:
+    - { role: rpi-k8s, role_action: 'setup flannel' }
+  tags:
+    - flannel
 ...

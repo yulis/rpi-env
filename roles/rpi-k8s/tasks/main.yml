@@ -10,4 +10,8 @@
 - name: join k8s cluster
   include: join.yml
   when: role_action == 'join minions'
+  
+- name: setup flannel
+  include: flannel.yml
+  when: role_action == 'setup flannel'
 ...

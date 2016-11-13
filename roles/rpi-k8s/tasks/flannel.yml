@@ -1,0 +1,9 @@
+---
+- name: create k8s flannel template
+  template:
+    src: kube-flannel.yml.erb
+    dest: /tmp/kube-flannel.yml
+
+- name: launch flannel daemonset
+  command: kubectl create -f /tmp/kube-flannel.yml
+...
