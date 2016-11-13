@@ -7,11 +7,15 @@
   include: init.yml
   when: role_action == 'init master'
 
+- name: setup flannel
+  include: flannel.yml
+  when: role_action == 'setup flannel'
+
 - name: join k8s cluster
   include: join.yml
   when: role_action == 'join minions'
   
-- name: setup flannel
-  include: flannel.yml
-  when: role_action == 'setup flannel'
+- name: setup k8s dashboard
+  include: dashboard.yml
+  when: role_action == 'deploy dashboard'
 ...

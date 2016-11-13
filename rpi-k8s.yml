@@ -14,6 +14,14 @@
   tags:
     - k8s-master
 
+- name: setup flannel overlay network
+  hosts: k8s_master
+  become: true
+  roles:
+    - { role: rpi-k8s, role_action: 'setup flannel' }
+  tags:
+    - flannel
+
 - name: join minions to k8s cluster
   hosts: k8s_minions
   become: true
@@ -22,11 +30,11 @@
   tags:
     - k8s-minions
 
-- name: setup flannel overlay network
+- name: deploy kubernetes dashboard
   hosts: k8s_master
   become: true
   roles:
-    - { role: rpi-k8s, role_action: 'setup flannel' }
+    - { role: rpi-k8s, role_action: 'deploy dashboard' }
   tags:
-    - flannel
+    - k8s-dashboard
 ...
