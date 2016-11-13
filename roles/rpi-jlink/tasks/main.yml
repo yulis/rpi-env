@@ -1,0 +1,56 @@
+---
+- name: create segger dir
+  file:
+    path: /opt/segger
+    owner: root
+    group: root
+    state: directory
+
+- name: download Jlink binaries
+  unarchive:
+    src: "{{ JlinkArchive }}"
+    dest: /opt/segger
+
+- name: create JLink symlink
+  file:
+    src: /opt/segger/{{ JlinkDirectory }}/JLinkExe
+    dest: /usr/local/bin/JLinkExe
+    state: link
+
+- name: register JLink udev rule
+  file:
+    src: /opt/segger/{{ JlinkDirectory }}/99-jlink.rules
+    dest: /etc/udev/rules.d/99-jlink.rules
+    state: link
+  register: udev_rule
+
+- name: restart machine on udev change
+  shell: nohup bash -c 'sleep 2 && shutdown -r now "J-Link udev rule added"' &
+  async: 0
+  poll: 0
+  ignore_errors: true
+  when: udev_rule|changed
+  register: rebooting
+
+- name: waiting for server to come back
+  local_action: wait_for host={{ ansible_host }} state=started delay=10 timeout=60
+  become: false
+  when: rebooting|changed
+
+- name: create nrfjprog dir
+  file:
+    path: /opt/nrfjprog
+    owner: root
+    group: root
+    state: directory
+
+- name: deploy nrfjprog script
+  git:
+    repo: https://github.com/yulis/nrfjprog.sh.git
+    dest: /opt/nrfjprog
+
+- name: create nrfjprog symlink
+  file:
+    src: /opt/nrfjprog/nrfjprog.sh
+    dest: /usr/local/bin/nrfjprog
+    state: link

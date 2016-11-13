@@ -1,0 +1,52 @@
+---
+- name: common rpi configuration
+  include_role:
+    name: rpi-common
+
+- name: add dockerproject GPG key
+  apt_key:
+    keyserver: "{{ keyserver }}"
+    id: 58118E89F3A912897C070ADBF76221572C52609D
+    state: present
+
+- name: add raspbian docker repo
+  apt_repository:
+    filename: docker.list
+    repo: deb [arch=armhf] https://apt.dockerproject.org/repo raspbian-jessie main
+    state: present
+
+- name: install docker-engine package
+  apt:
+    name: docker-engine
+    #update_cache: yes
+    state: present
+
+- name: create directory for systemd drop-in
+  file:
+    path: /etc/systemd/system/docker.service.d
+    owner: root
+    group: root
+    state: directory
+
+- name: put systemd drop-in file for overlay driver
+  copy:
+    src: docker.service.overlay.conf
+    dest: /etc/systemd/system/docker.service.d/overlay.conf
+    owner: root
+    group: root
+    mode: 644
+    backup: yes
+  notify:
+    - restart docker service
+
+- name: enable docker service
+  systemd:
+    name: docker
+    enabled: yes
+    daemon_reload: yes
+    state: started
+
+- name: install docker python libraries
+  pip:
+    name: docker-py
+...

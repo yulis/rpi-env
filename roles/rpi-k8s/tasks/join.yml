@@ -1,0 +1,20 @@
+---
+- name: pre-load k8s docker images
+  docker_image:
+    name: "{{ item }}"
+  with_items:
+    - gcr.io/google_containers/kube-proxy-arm:{{ k8s_version }}
+
+- name: check kubelet service is running
+  systemd:
+    name: kubelet
+    state: started
+
+- name: stat kubelet config
+  stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: kubelet_conf
+
+- name: run kubeadm join on minion
+  shell: kubeadm join --token {{ k8s_token }} {{ k8s_master_address }}
+  when: not kubelet_conf.stat.exists

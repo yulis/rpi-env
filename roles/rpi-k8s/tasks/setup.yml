@@ -1,0 +1,46 @@
+---
+- name: check if cgroups cpuset enabled
+  command: grep -q "cgroup_enable=cpuset" /boot/cmdline.txt
+  register: cpuset_check
+  check_mode: no
+  ignore_errors: true
+
+- name: enable cgroups cpuset
+  shell: sed -i '1s/^/cgroup_enable=cpuset /' /boot/cmdline.txt
+  register: append_cpuset
+  when: cpuset_check.rc == 1
+
+- name: reboot the node to enable cpuset
+  shell: nohup bash -c 'sleep 2 && shutdown -r now "J-Link udev rule added"' &
+  async: 0
+  poll: 0
+  ignore_errors: true
+  when: append_cpuset|changed
+  register: rebooting
+
+- name: waiting for server to come back
+  local_action: wait_for host={{ ansible_host }} state=started delay=10 timeout=60
+  become: false
+  when: rebooting|changed
+
+- name: add kubernetes GPG key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+
+- name: add kubernetes deb repo
+  apt_repository:
+    filename: docker.list
+    repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+
+- name: install k8s packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - kubelet
+    - kubeadm
+    - kubectl
+    - kubernetes-cni
+...

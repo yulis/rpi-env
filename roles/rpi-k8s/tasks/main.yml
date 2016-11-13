@@ -1,0 +1,13 @@
+---
+- name: setup software packages
+  include: setup.yml
+  when: role_action == 'setup'
+
+- name: initialize k8s master
+  include: init.yml
+  when: role_action == 'init master'
+
+- name: join k8s cluster
+  include: join.yml
+  when: role_action == 'join minions'
+...

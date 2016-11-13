@@ -1,0 +1,30 @@
+---
+- name: pre-load k8s docker images
+  docker_image:
+    name: "{{ item }}"
+  with_items:
+    - gcr.io/google_containers/etcd-arm:{{ etcd_version }}
+    - gcr.io/google_containers/kube-apiserver-arm:{{ k8s_version }}
+    - gcr.io/google_containers/kube-controller-manager-arm:{{ k8s_version }}
+    - gcr.io/google_containers/kube-scheduler-arm:{{ k8s_version }}
+    - gcr.io/google_containers/kube-discovery-arm:{{ kube_discovery_version }}
+    - gcr.io/google_containers/kubernetes-dashboard-arm:{{ kube_ui_version }}
+
+- name: check kubelet service is running
+  systemd:
+    name: kubelet
+    state: started
+
+- name: stat kubelet config
+  stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: kubelet_conf
+
+- name: run kubeadm init on master
+  shell: |
+    kubeadm init \
+      --token {{ k8s_token }} \
+      --use-kubernetes-version {{ k8s_version }} \
+      --pod-network-cidr={{ k8s_pod_network }}
+  when: not kubelet_conf.stat.exists
+...

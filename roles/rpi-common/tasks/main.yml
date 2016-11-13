@@ -1,0 +1,14 @@
+---
+- name: common debian configuration
+  include_role:
+    name: debian-common
+
+- name: install apt https method
+  become: true
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - apt-transport-https
+    - apparmor
+...
