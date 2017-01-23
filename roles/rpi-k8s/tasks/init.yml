@@ -27,4 +27,11 @@
       --use-kubernetes-version {{ k8s_version }} \
       --pod-network-cidr={{ k8s_pod_network }}
   when: not kubelet_conf.stat.exists
+  register: k8s_init
+
+- name: fetch admin.conf to local machine
+  fetch:
+    src: /etc/kubernetes/admin.conf
+    dest: ~/.k8s/admin.conf
+  when: k8s_init|changed
 ...
