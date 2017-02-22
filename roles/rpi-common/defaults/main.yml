@@ -1,2 +1,4 @@
 ---
 # defaults file for rpi-common
+ssh:
+  pub_key_path: "~/.ssh/rpi.pub"

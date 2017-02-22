@@ -1,5 +1,5 @@
 ---
-- hosts: rpi3
+- hosts: k8s
   become: true
   roles:
     - rpi-docker

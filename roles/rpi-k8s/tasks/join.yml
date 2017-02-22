@@ -17,6 +17,7 @@
 
 - name: wait for kube-dns pod to start
   # TODO: implement wait for 'kubectl get pods --all-namespaces | grep kube-dns | grep Running'
+  shell: kubectl get pods --all-namespaces | grep kube-dns | grep Running
   when: not kubelet_conf.stat.exists
 
 - name: run kubeadm join on minion

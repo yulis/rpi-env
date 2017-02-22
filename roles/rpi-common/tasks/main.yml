@@ -11,4 +11,7 @@
   with_items:
     - apt-transport-https
     - apparmor
+
+- name: Setup user
+  include: user.yml
 ...
