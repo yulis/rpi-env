@@ -1,2 +1,3 @@
 ---
 keyserver: 'ha.pool.sks-keyservers.net'
+docker_version_spec: '1.12*'

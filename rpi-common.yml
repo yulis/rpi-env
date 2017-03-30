@@ -1,0 +1,6 @@
+---
+- hosts: rpi
+  become: true
+  roles:
+    - rpi-common
+...

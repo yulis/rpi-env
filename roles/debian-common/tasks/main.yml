@@ -9,7 +9,13 @@
     - wavemon
     - python-setuptools
 
-- name: install latest pip
+- name: uninstall apt pip package
+  become: true
+  apt:
+    name: python-pip
+    state: absent
+
+- name: install latest pip using easy_install
   become: true
   easy_install:
     name: pip

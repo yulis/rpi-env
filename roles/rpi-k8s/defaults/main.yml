@@ -1,9 +1,10 @@
 ---
 role_action: setup
-k8s_token: '3Daamx.VknsucJYHov4bgzs'
-k8s_version: v1.4.4
+k8s_token: '3daamx.vknsucjyhov4bgzs'
+k8s_cni_version: 0.5.1
+k8s_version: 1.6.0
+k8s_version_label: stable
 kube_discovery_version: 1.0
-kube_ui_version: v1.4.2
-etcd_version: 2.2.5
+etcd_version: 3.0.14-kubeadm
 k8s_master_address: "{{ hostvars[groups['k8s_master'][0]]['ansible_wlan0']['ipv4']['address'] }}"
 k8s_pod_network: 10.244.0.0/16

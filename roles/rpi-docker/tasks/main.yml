@@ -1,8 +1,4 @@
 ---
-- name: common rpi configuration
-  include_role:
-    name: rpi-common
-
 - name: add dockerproject GPG key
   apt_key:
     keyserver: "{{ keyserver }}"
@@ -17,8 +13,8 @@
 
 - name: install docker-engine package
   apt:
-    name: docker-engine
-    #update_cache: yes
+    name: "docker-engine={{ docker_version_spec }}"
+    update_cache: yes
     state: present
 
 - name: create directory for systemd drop-in

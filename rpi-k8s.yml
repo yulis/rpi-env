@@ -3,8 +3,15 @@
   hosts: k8s
   become: true
   roles:
-    - rpi-docker
     - { role: rpi-k8s, role_action: setup }
+  tags:
+    - k8s-setup
+
+- name: pre-load k8s docker images
+  hosts: k8s_master
+  become: true
+  roles:
+    - { role: rpi-k8s, role_action: preload }
 
 - name: setup k8s master
   hosts: k8s_master

@@ -1,0 +1,11 @@
+---
+- name: pre-load k8s docker images
+  docker_image:
+    name: "{{ item }}"
+  with_items:
+    - gcr.io/google_containers/etcd-arm:{{ etcd_version }}
+    - gcr.io/google_containers/kube-apiserver-arm:v{{ k8s_version }}
+    - gcr.io/google_containers/kube-controller-manager-arm:v{{ k8s_version }}
+    - gcr.io/google_containers/kube-scheduler-arm:v{{ k8s_version }}
+    - gcr.io/google_containers/kubernetes-dashboard-arm:v{{ k8s_version }}
+  
